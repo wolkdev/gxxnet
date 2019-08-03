@@ -1,8 +1,8 @@
 CXX=g++
 LIBTOOL=ar
 LIBFLAGS=rvs
-CXXFLAGS=
-SRC=
+CXXFLAGS=-lws2_32
+SRC=Socket.cpp
 OBJ=$(SRC:.cpp=.o)
 LIB=libgxxnet.a
 
@@ -23,6 +23,10 @@ $(LIB): $(OBJ)
 
 %.o: %.cpp
 	$(CXX) -g -o $@ -c $< $(CXXFLAGS)
+
+
+Socket.cpp: Socket.hpp
+
 
 .PHONY: clean
 

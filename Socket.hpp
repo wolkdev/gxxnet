@@ -30,6 +30,7 @@ class Socket
 
     bool Connect(const std::string& _address, const int& _port);
     bool Bind(const std::string& _address, const int& _port);
+    bool Bind(const int& _port);
 
     bool Listen();
     Socket* Accep();

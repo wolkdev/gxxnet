@@ -77,6 +77,17 @@ bool Socket::Bind(const std::string& _address, const int& _port)
         >= 0;
 }
 
+bool Socket::Bind(const int& _port)
+{
+    SOCKADDR_IN sin;
+    sin.sin_addr.s_addr = INADDR_ANY;
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(_port);
+
+    return bind(nativeSocket, reinterpret_cast<SOCKADDR*>(&sin), sizeof(sin))
+        >= 0;
+}
+
 bool Socket::Listen()
 {
     return listen(nativeSocket, SOMAXCONN) >= 0;

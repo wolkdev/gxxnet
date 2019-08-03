@@ -1,0 +1,23 @@
+{
+    "configurations":
+    [
+        {
+            "name": "DEFAULT",
+            "includePath":
+            [
+                "${workspaceFolder}/*",
+                "C:/boost"
+            ],
+            "defines":
+            [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    
+    "version": 4
+}

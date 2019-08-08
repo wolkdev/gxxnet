@@ -21,6 +21,19 @@ void Socket::Cleanup()
     WSACleanup();
 }
 
+Socket::Socket(TRANSMISSION_PROTOCOL _tp, INTERNET_PROTOCOL _ip)
+{
+    nativeSocket = socket(
+        GetNativeInternetProtocol(_ip),
+        GetNativeSocketType(_tp),
+        GetNativeTransmissionProtocol(_tp));
+
+    if (nativeSocket == 0)
+    {
+        throw std::overflow_error("Cannot create native socket !");
+    }
+}
+
 Socket::Socket(SOCKET _nativeSocket)
 {
     if (_nativeSocket == 0)
@@ -31,19 +44,7 @@ Socket::Socket(SOCKET _nativeSocket)
     nativeSocket = _nativeSocket;
 }
 
-Socket::Socket(Socket::PROTOCOL _protocol)
-{
-    int socketType =
-        _protocol == Socket::PROTOCOL::TCP ? SOCK_STREAM : SOCK_DGRAM;
-
-    // AF_INET = IPv4   AF_INET6 = IPv6
-    nativeSocket = socket(AF_INET, socketType, GetNativeProtocol(_protocol));
-
-    if (nativeSocket == 0)
-    {
-        throw std::overflow_error("Cannot create native socket !");
-    }
-}
+Socket::Socket() {}
 
 Socket::~Socket()
 {
@@ -55,7 +56,7 @@ void Socket::Close()
     closesocket(nativeSocket);
 }
 
-bool Socket::Connect(const std::string& _address, const int& _port)
+bool Socket::Connect(const std::string& _address, unsigned short _port)
 {
     SOCKADDR_IN sin;
     sin.sin_addr.s_addr = inet_addr(_address.c_str());
@@ -63,10 +64,10 @@ bool Socket::Connect(const std::string& _address, const int& _port)
     sin.sin_port = htons(_port);
 
     return connect(nativeSocket, reinterpret_cast<SOCKADDR*>(&sin), sizeof(sin))
-        >= 0;
+        != SOCKET_ERROR;
 }
 
-bool Socket::Bind(const std::string& _address, const int& _port)
+bool Socket::Bind(const std::string& _address, unsigned short _port)
 {
     SOCKADDR_IN sin;
     sin.sin_addr.s_addr = inet_addr(_address.c_str());
@@ -74,10 +75,10 @@ bool Socket::Bind(const std::string& _address, const int& _port)
     sin.sin_port = htons(_port);
 
     return bind(nativeSocket, reinterpret_cast<SOCKADDR*>(&sin), sizeof(sin))
-        >= 0;
+        != SOCKET_ERROR;
 }
 
-bool Socket::Bind(const int& _port)
+bool Socket::Bind(unsigned short _port)
 {
     SOCKADDR_IN sin;
     sin.sin_addr.s_addr = INADDR_ANY;
@@ -85,24 +86,18 @@ bool Socket::Bind(const int& _port)
     sin.sin_port = htons(_port);
 
     return bind(nativeSocket, reinterpret_cast<SOCKADDR*>(&sin), sizeof(sin))
-        >= 0;
+        != SOCKET_ERROR;
 }
 
 bool Socket::Listen()
 {
-    return listen(nativeSocket, SOMAXCONN) >= 0;
+    return listen(nativeSocket, SOMAXCONN) != SOCKET_ERROR;
 }
 
-Socket* Socket::Accep()
+bool Socket::Accep(Socket& _outSocket)
 {
-    SOCKET clientNativeSocket = accept(nativeSocket, NULL, NULL);
-
-    if (clientNativeSocket != 0)
-    {
-        return new Socket(clientNativeSocket);
-    }
-
-    return nullptr;
+    _outSocket.nativeSocket = accept(nativeSocket, NULL, NULL);
+    return _outSocket.nativeSocket != 0;
 }
 
 bool Socket::Send(const char* _data, size_t _size, size_t& _sentBytes)
@@ -131,12 +126,32 @@ bool Socket::Receive(char* _buffer, size_t _bufferSize, size_t& _receivedBytes)
     return false;
 }
 
-int Socket::GetNativeProtocol(const Socket::PROTOCOL& _protocol)
+int Socket::GetNativeInternetProtocol(const INTERNET_PROTOCOL& _ip)
 {
-    switch (_protocol)
+    switch (_ip)
     {
-        case Socket::PROTOCOL::TCP: return IPPROTO_TCP;
-        case Socket::PROTOCOL::UDP: return IPPROTO_UDP;
-        default: return IPPROTO_TCP; // the defalut protocol is TCP
+        case INTERNET_PROTOCOL::IPv4: return AF_INET;
+        case INTERNET_PROTOCOL::IPv6: return AF_INET6;
+        default: return AF_INET6; // the defalut internet protocol is IPv6
+    }
+}
+
+int Socket::GetNativeTransmissionProtocol(const TRANSMISSION_PROTOCOL& _tp)
+{
+    switch (_tp)
+    {
+        case TRANSMISSION_PROTOCOL::TCP: return IPPROTO_TCP;
+        case TRANSMISSION_PROTOCOL::UDP: return IPPROTO_UDP;
+        default: return IPPROTO_TCP; // the defalut transmission protocol is TCP
+    }
+}
+
+int Socket::GetNativeSocketType(const TRANSMISSION_PROTOCOL& _tp)
+{
+    switch (_tp)
+    {
+        case TRANSMISSION_PROTOCOL::TCP: return SOCK_STREAM;
+        case TRANSMISSION_PROTOCOL::UDP: return SOCK_DGRAM;
+        default: return SOCK_STREAM; // the defalut transmission protocol is TCP
     }
 }

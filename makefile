@@ -2,7 +2,7 @@ CXX=g++
 LIBTOOL=ar
 LIBFLAGS=rvs
 CXXFLAGS=-lws2_32
-SRC=Socket.cpp
+SRC=Socket.cpp Peer.cpp Packet.cpp
 OBJ=$(SRC:.cpp=.o)
 LIB=libgxxnet.a
 
@@ -26,6 +26,8 @@ $(LIB): $(OBJ)
 
 
 Socket.cpp: Socket.hpp
+Peer.cpp: Peer.hpp
+Packet.cpp: Packet.hpp
 
 
 .PHONY: clean

@@ -3,7 +3,9 @@ project (gxxnet)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(gxxnet Test.cpp Socket.cpp)
+include_directories(includes)
+
+add_executable(gxxnet sources/Test.cpp sources/Socket.cpp)
 
 if (WIN32)
 target_link_libraries(gxxnet ws2_32)

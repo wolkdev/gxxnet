@@ -13,16 +13,16 @@ void server()
     char message[] = "hello world";
     size_t size;
 
-    Socket socket(Socket::PROTOCOL::TCP);
+    Socket socket = Socket::Create(Socket::PROTOCOL::TCP);
+
     if (socket.Bind(8080) && socket.Listen())
     {
         std::cout << "Server Is Listening !" << std::endl;
 
-        Socket client;
-        socket.Accep(client);
+        Socket client = socket.Accep();
 
-        client.Send(message, sizeof(message), size);
-        client.Receive(buffer, sizeof(buffer), size);
+        client.Send(message, sizeof(message), &size);
+        client.Receive(buffer, sizeof(buffer), &size);
 
         std::cout << buffer << std::endl;
     }
@@ -38,15 +38,15 @@ void client(std::string _ip)
     char message[] = "hello my friend !";
     size_t size;
 
-    Socket socket(Socket::PROTOCOL::TCP);
+    Socket socket = Socket::Create(Socket::PROTOCOL::TCP);
 
     if (socket.Connect(_ip, 8080))
     {
         std::cout << "Client Connected !" << std::endl;
 
-        socket.Receive(buffer, sizeof(buffer), size);
+        socket.Receive(buffer, sizeof(buffer), &size);
         std::cout << buffer << std::endl;
-        socket.Send(message, sizeof(message), size);
+        socket.Send(message, sizeof(message), &size);
     }
     else
     {

@@ -14,16 +14,22 @@ void server()
     size_t size;
 
     Socket socket(Socket::PROTOCOL::TCP);
-    socket.Bind(8080);
-    socket.Listen();
+    if (socket.Bind(8080) && socket.Listen())
+    {
+        std::cout << "Server Is Listening !" << std::endl;
 
-    Socket client;
-    socket.Accep(client);
+        Socket client;
+        socket.Accep(client);
 
-    client.Send(message, sizeof(message), size);
-    client.Receive(buffer, sizeof(buffer), size);
+        client.Send(message, sizeof(message), size);
+        client.Receive(buffer, sizeof(buffer), size);
 
-    std::cout << buffer << std::endl;
+        std::cout << buffer << std::endl;
+    }
+    else
+    {
+        std::cout << "Server Initialization Failed !" << std::endl;
+    }
 }
 
 void client(std::string _ip)
@@ -33,13 +39,19 @@ void client(std::string _ip)
     size_t size;
 
     Socket socket(Socket::PROTOCOL::TCP);
-    socket.Connect(_ip, 8080);
 
-    socket.Receive(buffer, sizeof(buffer), size);
+    if (socket.Connect(_ip, 8080))
+    {
+        std::cout << "Client Connected !" << std::endl;
 
-    std::cout << buffer << std::endl;
-
-    socket.Send(message, sizeof(message), size);
+        socket.Receive(buffer, sizeof(buffer), size);
+        std::cout << buffer << std::endl;
+        socket.Send(message, sizeof(message), size);
+    }
+    else
+    {
+        std::cout << "Client Connection Failed !" << std::endl;
+    }
 }
 
 int main(int argc, char const* argv[])
@@ -58,8 +70,6 @@ int main(int argc, char const* argv[])
             server();
         }
     }
-
-    system("pause");
 
     return 0;
 }

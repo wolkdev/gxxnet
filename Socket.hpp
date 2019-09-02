@@ -1,37 +1,58 @@
 #ifndef SOCKET__HPP
 #define SOCKET__HPP
 
-#include <WinSock2.h>
 #include <cstdlib>
 #include <string>
+
+#ifdef _WIN32
+
+#include <WS2tcpip.h>
+#include <WinSock2.h>
+
+
+typedef SOCKET NATIVE_SOCKET;
+
+#define NATVIVE_SOCKET_ERROR SOCKET_ERROR
+
+#elif __unix__
+
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+
+typedef int NATIVE_SOCKET;
+
+#define NATVIVE_SOCKET_ERROR (-1)
+
+#endif
+
+typedef struct sockaddr NATIVE_SOCKET_ADDRESS;
+typedef struct sockaddr_in NATIVE_SOCKET_ADDRESS_IN;
+typedef struct sockaddr_storage NATIVE_SOCKET_ADDRESS_STORAGE;
 
 class Socket
 {
     public:
-    enum INTERNET_PROTOCOL
-    {
-        IPv4,
-        IPv6
-    };
-
-    enum TRANSMISSION_PROTOCOL
+    enum PROTOCOL
     {
         TCP,
         UDP
     };
 
     private:
-    SOCKET nativeSocket = 0;
+    NATIVE_SOCKET nativeSocket = 0;
+
+    PROTOCOL protocol;
+
+#ifdef _WIN32
+    static int counter;
+#endif
 
     public:
-    static bool Init();
-    static void Cleanup();
-
-    Socket(
-        TRANSMISSION_PROTOCOL _tp,
-        INTERNET_PROTOCOL _ip = INTERNET_PROTOCOL::IPv4);
-    Socket(SOCKET _nativeSocket);
     Socket();
+    Socket(PROTOCOL _protocol);
     ~Socket();
 
     void Close();
@@ -47,9 +68,12 @@ class Socket
     bool Receive(char* _buffer, size_t _bufferSize, size_t& _receivedBytes);
 
     private:
-    static int GetNativeInternetProtocol(const INTERNET_PROTOCOL& _ip);
-    static int GetNativeTransmissionProtocol(const TRANSMISSION_PROTOCOL& _tp);
-    static int GetNativeSocketType(const TRANSMISSION_PROTOCOL& _tp);
+    static int GetNativeSocketType(const PROTOCOL& _protocol);
+
+#ifdef _WIN32
+    static bool Init();
+    static void Cleanup();
+#endif
 };
 
 #endif // !SOCKET__HPP

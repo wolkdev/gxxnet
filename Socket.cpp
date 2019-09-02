@@ -3,7 +3,9 @@
 
 #include <stdexcept>
 
+#ifdef _WIN32
 int Socket::counter = 0;
+#endif
 
 Socket::Socket()
 {
@@ -47,7 +49,11 @@ Socket::~Socket()
 
 void Socket::Close()
 {
+#ifdef _WIN32
     closesocket(nativeSocket);
+#elif __unix__
+    close(nativeSocket);
+#endif
 }
 
 bool Socket::Connect(const std::string& _address, unsigned short _port)

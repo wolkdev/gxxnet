@@ -17,6 +17,7 @@ typedef SOCKET NATIVE_SOCKET;
 #elif __unix__
 
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>

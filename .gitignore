@@ -1,6 +1,8 @@
 /.vscode/
 /build/
 
+TODO.txt
+
 *.exe
 *.o
 *.a

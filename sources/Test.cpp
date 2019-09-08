@@ -19,7 +19,7 @@ void server()
     {
         std::cout << "Server Is Listening !" << std::endl;
 
-        Socket client = socket.Accep();
+        Socket client = socket.Accept();
 
         client.Send(message, sizeof(message), &size);
         client.Receive(buffer, sizeof(buffer), &size);

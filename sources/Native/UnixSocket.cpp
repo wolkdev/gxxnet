@@ -20,7 +20,7 @@ int GetNativeSocketType(const Socket::PROTOCOL& _protocol)
     }
 }
 
-static Socket Socket::Create(PROTOCOL _protocol)
+Socket Socket::Create(PROTOCOL _protocol)
 {
     Socket sock;
     sock.nativeSocket = socket(AF_INET, GetNativeSocketType(_protocol), 0);

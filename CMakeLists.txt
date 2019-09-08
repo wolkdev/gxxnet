@@ -11,11 +11,7 @@ endif()
 
 set(SOURCES
     ${SOCKET_SOURCE}
-    sources/Task.cpp
     sources/Packet.cpp
-    sources/Remote.cpp
-    sources/Client.cpp
-    sources/Host.cpp
     sources/Test.cpp)
 
 include_directories(includes)

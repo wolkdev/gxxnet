@@ -2,6 +2,7 @@
 #define PACKET__HPP
 
 #include <cstdint>
+#include <cstddef>
 
 class Packet
 {

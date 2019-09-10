@@ -5,9 +5,7 @@
 #include <thread>
 #include <vector>
 
-int x_pos_;
-
-void server()
+void tcpserver()
 {
     char buffer[500];
     char message[] = "hello world";
@@ -17,7 +15,7 @@ void server()
 
     if (socket.Bind(8080) && socket.Listen())
     {
-        std::cout << "Server Is Listening !" << std::endl;
+        std::cout << "tcpserver Is Listening !" << std::endl;
 
         Socket client = socket.Accept();
 
@@ -28,11 +26,11 @@ void server()
     }
     else
     {
-        std::cout << "Server Initialization Failed !" << std::endl;
+        std::cout << "tcpserver Initialization Failed ! = " << socket.GetLastError() << std::endl;
     }
 }
 
-void client(std::string _ip)
+void tcpclient(std::string& _ip)
 {
     char buffer[500];
     char message[] = "hello my friend !";
@@ -42,7 +40,7 @@ void client(std::string _ip)
 
     if (socket.Connect(_ip, 8080))
     {
-        std::cout << "Client Connected !" << std::endl;
+        std::cout << "tcpclient Connected !" << std::endl;
 
         socket.Receive(buffer, sizeof(buffer), &size);
         std::cout << buffer << std::endl;
@@ -50,7 +48,52 @@ void client(std::string _ip)
     }
     else
     {
-        std::cout << "Client Connection Failed !" << std::endl;
+        std::cout << "tcpclient Connection Failed ! = " << socket.GetLastError() << std::endl;
+    }
+}
+
+void udpsender(std::string& _ip)
+{
+    char buffer[500];
+    char message[] = "hello world";
+    size_t size;
+
+    Socket socket = Socket::Create(Socket::PROTOCOL::UDP);
+
+    if (socket.Bind(_ip, 8080))
+    {
+        std::cout << "udpsender Binded !" << std::endl;
+
+        socket.Send(message, sizeof(message), &size);
+        socket.Receive(buffer, sizeof(buffer), &size);
+
+        std::cout << buffer << std::endl;
+    }
+    else
+    {
+        std::cout << "udpsender Bind Failed ! = " << socket.GetLastError() << std::endl;
+    }
+}
+
+void udpreceiver(std::string& _ip)
+{
+    char buffer[500];
+    char message[] = "hello my friend !";
+    size_t size;
+
+    Socket socket = Socket::Create(Socket::PROTOCOL::UDP);
+
+    if (socket.Bind(_ip, 8080))
+    {
+        std::cout << "udpreceiver Binded !" << std::endl;
+
+        socket.Receive(buffer, sizeof(buffer), &size);
+        std::cout << buffer << std::endl;
+        socket.Send(message, sizeof(message), &size);
+    }
+    else
+    {
+        std::cout << "udpreceiver Bind Failed ! = " << socket.GetLastError() << std::endl;
     }
 }
 
@@ -60,14 +103,27 @@ int main(int argc, char const* argv[])
     {
         std::string arg = std::string(argv[1]);
 
-        if (argc >= 3 && arg == "client")
+        if (argc >= 3)
         {
             std::string ip = std::string(argv[2]);
-            client(ip);
+            
+            if (arg == "tcpclient")
+            {
+                tcpclient(ip);
+            }
+            else if (arg == "udpreceiver")
+            {
+                udpreceiver(ip);
+            }
+            else if (arg == "udpsender")
+            {
+                udpsender(ip);
+            }
         }
-        else if (arg == "server")
+
+        if (arg == "tcpserver")
         {
-            server();
+            tcpserver();
         }
     }
 

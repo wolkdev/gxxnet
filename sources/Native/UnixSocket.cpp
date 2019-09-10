@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 #include <arpa/inet.h>
+#include <cerrno>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -119,4 +120,10 @@ bool Socket::Receive(char* _buffer, size_t _bufferSize, size_t* _count)
     }
 
     return false;
+}
+
+int Socket::GetLastError()
+{
+    int err = errno;
+    return err;
 }

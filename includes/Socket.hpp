@@ -34,6 +34,8 @@ class Socket
     Socket Accept();
     bool Send(const char* _data, size_t _size, size_t* _count = nullptr);
     bool Receive(char* _buffer, size_t _bufferSize, size_t* _count = nullptr);
+
+    int GetLastError();
 };
 
 #endif // !SOCKET__HPP

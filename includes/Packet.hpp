@@ -7,19 +7,6 @@
 class Packet
 {
     public:
-    enum MSG_TYPE
-    {
-        // LOCKED MESSAGE TYPES
-        CONNECTION,
-        CONNECTION_FAILED,
-        DISCONNECTION,
-        ACCEPT,
-
-        SIMPLE_MESSAGE,
-        CUSTOM_MESSAGE_START
-    };
-
-    public:
     typedef char byte;
 
     public:

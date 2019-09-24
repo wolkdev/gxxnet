@@ -11,6 +11,10 @@ endif()
 
 set(SOURCES
     ${SOCKET_SOURCE}
+    sources/Host.cpp
+    sources/Client.cpp
+    sources/Remote.cpp
+    sources/Task.cpp
     sources/Packet.cpp
     sources/Test.cpp)
 

@@ -83,13 +83,11 @@ void udpreceiver(std::string& _ip)
 
     Socket socket = Socket::Create(Socket::PROTOCOL::UDP);
 
-    if (socket.Bind(_ip, 8080))
+    if (socket.Bind(8080))
     {
         std::cout << "udpreceiver Binded !" << std::endl;
 
         socket.Receive(buffer, sizeof(buffer), &size);
-        std::cout << buffer << std::endl;
-        socket.Send(message, sizeof(message), &size);
     }
     else
     {
